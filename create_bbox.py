@@ -1,6 +1,8 @@
 import cv2
 import numpy as np	
 
+import pdb
+
 class bounding_box(object):
 	"""docstring for bounding_box"""
 	def __init__(self	):
@@ -10,6 +12,7 @@ class bounding_box(object):
 		img_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 		img_blur = cv2.blur(img_gray, (3,3))
 		ret,thresh = cv2.threshold(img_blur,140,255,0)
+		pdb.set_trace()
 		im2,contours,hierarchy = cv2.findContours(thresh, 1, 2)
 		areas = []
 		for i in range(len(contours)):

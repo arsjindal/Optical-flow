@@ -4,7 +4,7 @@ import pdb
 from PIL import Image
 import time
 import anms
-import create_bbox
+import bbox_create
 
 from config import *
 '''
@@ -51,6 +51,7 @@ class Harris_corners():
     
     self.x,self.y = np.where(H>=0.05)
     self.r_values = H[self.x,self.y]
+    #pdb.set_trace()
     return H
 
   def adap_supp(self,num_features):
@@ -64,7 +65,7 @@ class Harris_corners():
     points['x_index']=self.x[indexes]
     points['y_index']=self.y[indexes]
     points['radius_value']=np.ones(length)*999999999
-    
+    #pdb.set_trace()
     for point in range(length-1):
       
       index_bool = (points['r_value']<1.9*points['r_value'][point]) & \
@@ -96,15 +97,17 @@ class Harris_corners():
 if __name__ == "__main__":
   sobel_x = np.array([[-1, 0, +1],[-2, 0, +2],[-1, 0, +1]])
   sobel_y = np.array([[-1, -2, -1],[0, 0, 0],[+1, +2, +1]])
-  bbox = create_bbox.bounding_box()
+  bbox = bbox_create.bounding_box()
   image = cv2.imread('Easy/0.png')
-  x,y,w,h = bbox.create_bbox(image)
+  bboxes = bbox.create_bbox(image)
+  x,y,w,h = bboxes[0]
   img_req = image[y:y+h,x:x+w]
+  #pdb.set_trace()
   img_gray = cv2.cvtColor(img_req, cv2.COLOR_RGB2GRAY)
   H = Harris_corners(img_gray,img_req)
   gaussian_filter = H.gaussian_filter(1)
   suppressed_image = H.corner_detector(0.04)
   points_x, points_y = H.adap_supp_class(num_features=100)
-  print(points)
+  #print(points_x)
 
 
