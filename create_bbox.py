@@ -19,10 +19,11 @@ class bounding_box(object):
 		pos = areas.index(max(areas))
 		cnt= contours[pos]
 		print(len(contours))
-		x,y,w,h = cv2.boundingRect(cnt)
-		cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
+		self.x,self.y,self.w,self.h = cv2.boundingRect(cnt)
+		cv2.rectangle(image,(self.x,self.y),(self.x+self.w,self.y+self.h),(0,255,0),2)
 		cv2.imshow('image',image)
 		cv2.waitKey(0)
+		return self.x,self.y,self.w,self.h
 
 
 if __name__ == '__main__':
