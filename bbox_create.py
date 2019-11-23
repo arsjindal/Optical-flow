@@ -16,7 +16,9 @@ class bounding_box(object):
       print("Press q to quit or c to continue ")
       k = cv2.waitKey(0) & 0xFF
       if (k==113):
+        cv2.destroyWindow("ROI selector")
         break
+
     
     #pdb.set_trace()
     return bbox

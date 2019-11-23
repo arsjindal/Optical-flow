@@ -27,11 +27,11 @@ Output:
 
 
 class Harris_corners():
-  def __init__(self, image, rgb_image):
+  def __init__(self, image):
     self.image = np.float32(image/image.max())
     self.s_x = np.array([[-1,0,+1],[-2,0,+2],[-1,0,+1]])
     self.s_y = np.array([[-1,-2,-1],[0,0,0],[+1,+2,+1]])
-    self.rgb_image = rgb_image
+    
 
   def gaussian_filter(self,sigma):
     size = np.ceil(3*sigma*2)+1
@@ -112,6 +112,7 @@ if __name__ == "__main__":
   # points_x, points_y = H.adap_supp_class(num_features=100)
 
   # now using function estimate translation
+  '''
   no_frames = os.listdir('Easy')
   for i in range(len(no_frames)):
     if(i>0):
@@ -131,7 +132,7 @@ if __name__ == "__main__":
     suppressed_image = H.corner_detector(0.04)
     points_x, points_y = H.adap_supp_class(num_features=100)
     est = estimateAllTransitions.estimateTranslation(points_x,points_y)
-
+  '''
 
 
   #print(points_x)
