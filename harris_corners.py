@@ -5,6 +5,8 @@ from PIL import Image
 import time
 import anms
 import bbox_create
+import estimateAllTransitions
+import os
 
 from config import *
 '''
@@ -103,11 +105,35 @@ if __name__ == "__main__":
   x,y,w,h = bboxes[0]
   img_req = image[y:y+h,x:x+w]
   #pdb.set_trace()
-  img_gray = cv2.cvtColor(img_req, cv2.COLOR_RGB2GRAY)
-  H = Harris_corners(img_gray,img_req)
-  gaussian_filter = H.gaussian_filter(1)
-  suppressed_image = H.corner_detector(0.04)
-  points_x, points_y = H.adap_supp_class(num_features=100)
+  # img_gray = cv2.cvtColor(img_req, cv2.COLOR_RGB2GRAY)
+  # H = Harris_corners(img_gray,img_req)
+  # gaussian_filter = H.gaussian_filter(1)
+  # suppressed_image = H.corner_detector(0.04)
+  # points_x, points_y = H.adap_supp_class(num_features=100)
+
+  # now using function estimate translation
+  no_frames = os.listdir('Easy')
+  for i in range(len(no_frames)):
+    if(i>0):
+      image = cv2.imread('Easy/%s.png'%str(i))
+    if(i<len(no_frames-1)):
+      image2 = cv2.imread('Easy/%s.png'%str(i+1))
+
+    if(i==0):
+      img_req = image[y:y+h,x:x+w]
+      img_req2 = image2[y:y+h,x:x+w]
+    else:
+      img_req = image[new_bbox[0][1]:y[1]]
+      
+    img_gray = cv2.cvtColor(img_req, cv2.COLOR_RGB2GRAY)
+    H = Harris_corners(img_gray,img_req)
+    gaussian_filter = H.gaussian_filter(1)
+    suppressed_image = H.corner_detector(0.04)
+    points_x, points_y = H.adap_supp_class(num_features=100)
+    est = estimateAllTransitions.estimateTranslation(points_x,points_y)
+
+
+
   #print(points_x)
 
 
