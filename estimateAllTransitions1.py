@@ -26,7 +26,7 @@ class estimateTranslation():
 		sobel_x = np.array([[-1, 0, +1],[-2, 0, +2],[-1, 0, +1]])
 		sobel_y = np.array([[-1, -2, -1],[0, 0, 0],[+1, +2, +1]])
 		Ix = signal.convolve2d(img1,sobel_x, boundary='symm', mode='same')
-		Iy = signal.convolve2d(img2,sobel_y, boundary='symm', mode='same')
+		Iy = signal.convolve2d(img1,sobel_y, boundary='symm', mode='same')
 		x_range = np.arange(Ix.shape[1])
 		y_range = np.arange(Ix.shape[0])
 		It_interp = interpolate.interp2d(x_range,y_range,It,kind='cubic')
@@ -89,7 +89,7 @@ class estimateTranslation():
 				self.newXs.append(x)
 				self.newYs.append(y)
 				n_values+=1
-				#print("[IN Range]")
+				# print("[IN Range]")
 			else:
 				#print("x is out of range for this case")
 				indexes[i]=0
@@ -105,7 +105,7 @@ class estimateTranslation():
 		'''This is to predict new bounding box coordinates. 
 		Input bbox = np.array([x,y],[x,y],[x+w,y+h],[x+w,y+h])
 		new_coord[0] belongs to w' & new_coord[1] belongs to h'''
-		
+
 		length = len(self.startXs)
 		src = np.hstack((self.startXs.reshape(length,1),self.startYs.reshape(length,1)))
 		dst = np.hstack((self.newXs.reshape(length,1),self.newYs.reshape(length,1)))
@@ -128,6 +128,47 @@ class estimateTranslation():
 		self.new_bbox[1]= bbox[1]+new_coord[1]-bbox[3]/2
 		self.new_bbox[2]= bbox[2]
 		self.new_bbox[3]= bbox[3]
+
+		return self.new_bbox
+
+	def applyGeometricTransformations(self, bbox,i):
+		'''This is to predict new bounding box coordinates. 
+		Input bbox = np.array([x,y],[x,y],[x+w,y+h],[x+w,y+h])
+		new_coord[0] belongs to w' & new_coord[1] belongs to h'''
+		x = bbox[0]
+		y = bbox[1]
+		bbox_x = np.array([bbox[0],bbox[0],bbox[0]+bbox[2], bbox[0]+bbox[2]])
+		bbox_x = np.reshape(bbox_x,(1,4))
+		bbox_y = np.array([bbox[1],bbox[1],bbox[1]+bbox[3], bbox[1]+bbox[3]])
+		bbox_y = np.reshape(bbox_y,(1,4))
+		bbox_ones = np.ones((1,4))
+		bbox_abs = np.vstack((bbox_x,bbox_y,bbox_ones))
+		length = len(self.startXs)
+		# pdb.set_trace()
+		self.startXs, self.startYs , self.newXs, self.newYs = self.startXs+x, self.startYs+y , self.newXs+x, self.newYs+y
+		src = np.hstack((self.startXs.reshape(length,1),self.startYs.reshape(length,1)))
+		dst = np.hstack((self.newXs.reshape(length,1),self.newYs.reshape(length,1)))
+		#pdb.set_trace()
+		tform = tf.estimate_transform('similarity', src, dst)
+		# center_x = bbox[0]+bbox[2]/2
+		# center_y = bbox[1]+bbox[3]/2
+		# center_x = bbox[2]/2
+		# center_y = bbox[3]/2
+		# old_coord = np.array([center_x,center_y,1]).reshape(3,1)
+		new_coord = np.matmul(tform.params,bbox_abs)
+		# pdb.set_trace()
+		diff = np.linalg.norm(new_coord-bbox_abs)
+		print("[values %s]"%str(i),diff)
+		if diff>17 :
+			new_coord = bbox_abs.copy()
+		#new_center = warp(np.array([center_x,center_y]),tform)
+		x1 = new_coord[0]/new_coord[2]
+		y1 = new_coord[1]/new_coord[2]
+		self.new_bbox = np.zeros((4,1))
+		self.new_bbox[0]= min(x1[0],x1[1])
+		self.new_bbox[1]= min(y1[0],y1[1])
+		self.new_bbox[2]= max(x1[2],x1[3])-min(x1[0],x1[1])
+		self.new_bbox[3]= max(y1[2],y1[3])-min(y1[0],y1[1])
 
 		return self.new_bbox
 
