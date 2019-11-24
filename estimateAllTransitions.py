@@ -41,7 +41,7 @@ class estimateTranslation():
 			error=100
 			#for j in range(Iterations):
 			iterations=0
-			while(error>0.0) and iterations<6:	
+			while(error>0.0) and iterations<50:	
 			
 				try:
 					#It_small = It[y-4:y+6,x-4:x+6]
@@ -68,7 +68,7 @@ class estimateTranslation():
 					f = np.sum(iy*it)
 					A = np.array([[a,b],[b,c]])
 					#pdb.set_trace()
-					B = np.array([e,f])
+					B = -np.array([e,f])
 					B = np.reshape(B,(2,1))
 					u_v = np.matmul(np.linalg.inv(A),B)
 					x = x + u_v[0]
@@ -85,7 +85,7 @@ class estimateTranslation():
 				except:
 					print("failed")
 
-			if (x <= width) and (y<=length) and error<0.10:
+			if (x <= width) and (y<=length):
 				self.newXs.append(x)
 				self.newYs.append(y)
 				n_values+=1

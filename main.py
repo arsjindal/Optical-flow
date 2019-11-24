@@ -36,9 +36,9 @@ if __name__ == '__main__':
 		img_req_1 = img_req_1/255
 		img_req_2 = img_req_2/255
 		H = Harris_corners(img_req_1)
-		gaussian_filter = H.gaussian_filter(0.5)
+		gaussian_filter = H.gaussian_filter(0.7)
 		suppressed_image = H.corner_detector(0.04)
-		points_y, points_x= H.adap_supp_class(num_features=50)
+		points_y, points_x= H.adap_supp_class(num_features=10)
 
 		img_req_1 = signal.convolve2d(img_req_1,gaussian_filter,boundary='symm',mode='same')
 		img_req_2 = signal.convolve2d(img_req_2,gaussian_filter,boundary='symm',mode='same')
