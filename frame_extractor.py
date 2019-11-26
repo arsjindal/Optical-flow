@@ -19,8 +19,7 @@ class frame_reader(object):
 			current_frame = 0
 			while True:
 				ret, frame = self.cam.read()
-				frame = frame.T
-				frame = np.reshape(frame,(width,height,ch))
+				
 				if ret:
 					name_frame = str(current_frame)
 					name = folder_name+'/%s'%name_frame+'.png'
