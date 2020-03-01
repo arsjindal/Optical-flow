@@ -1,10 +1,11 @@
 import cv2
 import numpy as np	
-from new_getFeatures import getFeatures
-from new_estimateAllTranslation import estimateAllTranslation
+from getFeatures import getFeatures
+from estimateAllTranslation import estimateAllTranslation
 from applyGeometricTransformations import applyGeometricTransformations
 import frame_extractor
 import os
+import argparse
 
 class object_tracker(object):
 	"""docstring for object_tracker"""
@@ -15,6 +16,8 @@ class object_tracker(object):
 
 	def collecting_no_of_frames(self,folder_name):
 		self.folder_name = folder_name
+		if not os.path.exists(self.folder_name):
+			os.mkdir(self.folder_name)
 		self.Easy.save_video(self.folder_name)
 		self.names = os.listdir(self.folder_name)
 		self.names.sort()
@@ -39,7 +42,7 @@ class object_tracker(object):
 
 	def track_object(self):
 		template = cv2.cvtColor(self.img1,cv2.COLOR_BGR2GRAY)
-		out = cv2.VideoWriter(self.folder_name+'_results.avi',0,cv2.VideoWriter_fourcc('M','J','P','G'),20.0,(template.shape[1],template.shape[0]))
+		out = cv2.VideoWriter('Results/'+self.folder_name+'_results.avi',0,cv2.VideoWriter_fourcc('M','J','P','G'),20.0,(template.shape[1],template.shape[0]))
 		self.startXs, self.startYs = getFeatures(template,self.bbox[0],use_shi=False)
 		for i in range(1,self.no_frames):
 			print('Tracking for frame: %s'%str(i))
@@ -91,16 +94,22 @@ class object_tracker(object):
 
 
 if __name__ == '__main__':
-	# ot = object_tracker('Easy.mp4')
-	# ot.collecting_no_of_frames('Easy')
-	# ot.draw_bounding_box()
-	# ot.track_object()
+	parser = argparse.ArgumentParser(description='Videos to track Object')
+	parser.add_argument('indir', type=str, help='Input dir for video')
+	parser.add_argument('folder', type=str, help='Folder for saving extracted Frames')
+	args = parser.parse_args()
+	# parser.add_argument('outdir', type=str, help='Folder for saving extracted Frames')
+	# ot = object_tracker('Videos/Easy.mp4')
+	ot = object_tracker(args.indir)
+	ot.collecting_no_of_frames(args.folder)
+	ot.draw_bounding_box()
+	ot.track_object()
 
 	# applying for medium 
-	ot_m = object_tracker('Medium.mp4')
-	ot_m.collecting_no_of_frames('Medium')
-	ot_m.draw_bounding_box()
-	ot_m.track_object()
+	# ot_m = object_tracker('Videos/Medium.mp4')
+	# ot_m.collecting_no_of_frames('Medium')
+	# ot_m.draw_bounding_box()
+	# ot_m.track_object()
 
 
 
