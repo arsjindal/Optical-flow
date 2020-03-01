@@ -2,7 +2,7 @@
 
 This Project contains implementation of KLT-Tracker from scratch. The main intent of this project is to write algorithm to track objects in motion.
 
-![Output sample](https://github.com/arsjindal/Optical-flow/Sample_output.gif)
+![Output sample](https://github.com/arsjindal/Optical-flow/blob/master/Sample_ouput.gif)
 
 
 ### Prerequisites
