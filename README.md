@@ -43,7 +43,3 @@ python3 object_tracker.py Videos/Easy.mp4 Easy
 
 * **Neil Rodrigues** - *Project Partner* - [rodr651](https://github.com/rodri651)
 
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
